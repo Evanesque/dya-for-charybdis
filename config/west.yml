@@ -1,0 +1,83 @@
+# config/west.yml -- charybdis (nRF52840 BLE split, PMW3610 trackball on right/central)
+#
+# Everything comes from cormoran via `defaults`, tracking main unless a
+# revision pin is shown. `remote:` and `revision: main` are inherited and
+# therefore omitted on each entry.
+
+manifest:
+  version: "1.2"
+
+  remotes:
+    - name: cormoran
+      url-base: https://github.com/cormoran
+
+  defaults:
+    remote: cormoran
+    revision: main
+
+  projects:
+    # ---- ZMK core: cormoran fork carrying the custom Studio RPC protocol
+    # ---- and the activity timeout API that zmk-module-settings-rpc calls.
+    # ---- Imports app/west.yml, which pins zephyr + zmk-studio-messages.
+    - name: zmk
+      remote: cormoran
+      revision: main+dya
+      import:
+        file: app/west.yml
+
+    # ---- Trackball: sensor driver, runtime input processors (snipe/scroll),
+    # ---- and the persistence backend both sit on.
+    - name: zmk-driver-pmw3610-with-custom-studio-rpc
+      remote: cormoran
+      import: true
+    - name: zmk-module-runtime-input-processor
+      remote: cormoran
+      import: true
+    - name: zmk-feature-custom-settings
+      remote: cormoran
+      import: true
+
+    # ---- Studio tabs: Connection / Settings / Device Info / Key Switches
+    - name: zmk-module-ble-management
+      remote: cormoran
+      import: true
+    - name: zmk-module-settings-rpc
+      remote: cormoran
+      import: true
+    - name: zmk-feature-device-info
+      remote: cormoran
+      import: true
+    - name: zmk-feature-kscan-diagnostics
+      remote: cormoran
+      import: true
+
+    # ---- Studio-editable combos and macros
+    - name: zmk-feature-runtime-combo
+      remote: cormoran
+      import: true
+    - name: zmk-feature-runtime-macro
+      remote: cormoran
+      import: true
+
+    # ---- Per-OS / user-selectable default layer.
+    # PINNED ON PURPOSE: main defines only ZMK_DEFAULT_LAYER + MIN/MAX_INDEX;
+    # the Studio RPC symbols live on this branch, which is also the pin the
+    # dya2 reference config uses. Unpin and those conf lines go undefined.
+    - name: zmk-feature-default-layer
+      revision: codex/custom-rpc-rewrite
+      import: true
+
+    # ---- Stability watchdog: incident log, freeze + hard-fault detection
+    - name: zmk-feature-watchdog
+      remote: cormoran
+      import: true
+
+    # ---- Optional: cormoran's dya2 lists OS detection as its own module
+    # ---- (zmk-feature-os-detection) with its own CONFIG_ZMK_OS_DETECTION*
+    # ---- symbols. Uncomment only if CONFIG_ZMK_DEFAULT_LAYER_OS_DETECTION
+    # ---- comes up undefined after `west update`.
+    # - name: zmk-feature-os-detection
+    #   import: true
+
+  self:
+    path: config

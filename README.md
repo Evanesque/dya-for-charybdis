@@ -11,6 +11,13 @@ A `config/`-only west workspace: devicetree, Kconfig, keymap. Not a ZMK fork.
 
 ---
 
+##Keymap
+
+![Charybdis Keymap](img/charybdis.svg)
+
+
+---
+
 ## Status
 
 All twelve Studio tabs live:

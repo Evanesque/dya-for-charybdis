@@ -11,7 +11,7 @@ A `config/`-only west workspace: devicetree, Kconfig, keymap. Not a ZMK fork.
 
 ---
 
-##Keymap
+## Keymap
 
 ![Charybdis Keymap](img/charybdis.svg)
 

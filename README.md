@@ -33,7 +33,7 @@ Right half / central: `FLASH 370,236 B / 792 KB (45.65%)` · `RAM 164,324 B / 25
 
 | | |
 |---|---|
-| Keyboard | [Charybdis]([https://github.com/bastardkb/charybdis]) |
+| Keyboard | [Charybdis](https://github.com/bastardkb/charybdis) |
 | MCUs | 2× nice!nano **v2** (nRF52840) |
 | Split | Bluetooth LE |
 | Central | **right half** — set by `SHIELD_CHARYBDIS_RIGHT` in [config/boards/shields/charybdis/Kconfig.defconfig](config/boards/shields/charybdis/Kconfig.defconfig) |

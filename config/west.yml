@@ -1,8 +1,21 @@
 # config/west.yml -- charybdis (nRF52840 BLE split, PMW3610 trackball on right/central)
 #
-# Everything comes from cormoran via `defaults`, tracking main unless a
-# revision pin is shown. `remote:` and `revision: main` are inherited and
-# therefore omitted on each entry.
+# FROZEN 2026-10-14. Every revision is a SHA. Reconstructed for Actions run
+# #1 (run 38272721921, built 2026-10-12T15:46:52Z, config commit b3abe7c).
+#
+# How these were recovered: newest commit on each default branch at or before
+# build time, cross-checked against upstream activity. zmk main+dya confirmed
+# against the live branch tip -- unmoved since 2026-07-25. Upstream was quiet
+# for ~3 months before the build; the only recent mover was
+# zmk-module-runtime-input-processor (2026-09-27).
+#
+# NOT frozen here, frozen transitively: pinning zmk freezes app/west.yml as
+# read at that commit, which carries zephyr v4.1.0+zmk-fixes (a tag,
+# immutable) plus hal_stm32, lvgl and zmk-studio-messages at fixed SHAs.
+#
+# To unfreeze deliberately: set a revision back to a branch name, `west
+# update`, rebuild, check FLASH/RAM against the README's Status block,
+# then re-freeze from `west list`.
 
 manifest:
   version: "1.2"
@@ -11,6 +24,9 @@ manifest:
     - name: cormoran
       url-base: https://github.com/cormoran
 
+  # Kept on purpose: a project with no revision falls back to master, which
+  # is worse than main. Moot while every entry below is pinned -- but any
+  # NEW project must carry its own `revision:` SHA or it floats.
   defaults:
     remote: cormoran
     revision: main
@@ -21,7 +37,7 @@ manifest:
     # ---- Imports app/west.yml, which pins zephyr + zmk-studio-messages.
     - name: zmk
       remote: cormoran
-      revision: main+dya
+      revision: e5c9b6915b56801193e359dd9bad4a167ce0d1b8
       import:
         file: app/west.yml
 
@@ -29,56 +45,70 @@ manifest:
     # ---- and the persistence backend both sit on.
     - name: zmk-driver-pmw3610-with-custom-studio-rpc
       remote: cormoran
+      revision: 5c34ea0eec246a1c986111417cd779b53144629a
       import: true
     - name: zmk-module-runtime-input-processor
       remote: cormoran
+      revision: decf628d7ce5ed95b520c650824c28ea9de649c1
       import: true
     - name: zmk-feature-custom-settings
       remote: cormoran
+      revision: c6a7fef3a3be3d3ace5de9a4b0628c6418cd1f3f
       import: true
 
     # ---- Studio tabs: Connection / Settings / Device Info / Key Switches
     - name: zmk-module-ble-management
       remote: cormoran
+      revision: 57738cc4fc6ba80e82a7ac57741a0339cb186cd4
       import: true
     - name: zmk-module-settings-rpc
       remote: cormoran
+      revision: 78f86df9e6c5edaf57bef3ccbd7f360cfdf49291
       import: true
     - name: zmk-feature-device-info
       remote: cormoran
+      revision: 8cedd2dd9f04e19ea5a17b94914dd47a09d8db11
       import: true
     - name: zmk-feature-kscan-diagnostics
       remote: cormoran
+      revision: 1432f7fe0cfe903cd7d3c9931ae6bd6f2e1f328e
       import: true
     - name: zmk-feature-module-physical-layout
       remote: cormoran
+      revision: 4f18de45dc27820725d267916b4cdacc0e0b6cf9
 
     # ---- Studio-editable combos and macros
     - name: zmk-feature-runtime-combo
       remote: cormoran
+      revision: d9490e7b5d41c516221d131241009e81740efcee
       import: true
     - name: zmk-feature-runtime-macro
       remote: cormoran
+      revision: 38530962eb7061b60efcb98e84585cfb1f0cb6de
       import: true
 
     # ---- Per-OS / user-selectable default layer.
-    # PINNED ON PURPOSE: main defines only ZMK_DEFAULT_LAYER + MIN/MAX_INDEX;
-    # the Studio RPC symbols live on this branch, which is also the pin the
-    # dya2 reference config uses. Unpin and those conf lines go undefined.
+    # Was pinned to the BRANCH codex/custom-rpc-rewrite -- branches get
+    # deleted. This SHA is that branch's tip at build time; the Studio RPC
+    # symbols live ONLY here, so never revert this to main.
     - name: zmk-feature-default-layer
-      revision: codex/custom-rpc-rewrite
+      revision: b25cb5b324da2d9bbc84e1877c775f5b2b7c6845
       import: true
 
     # ---- Stability watchdog: incident log, freeze + hard-fault detection
     - name: zmk-feature-watchdog
       remote: cormoran
+      revision: 84ad14c6c3645dc40b23f45d08ab45418655f912
       import: true
 
     # ---- Optional: cormoran's dya2 lists OS detection as its own module
     # ---- (zmk-feature-os-detection) with its own CONFIG_ZMK_OS_DETECTION*
     # ---- symbols. Uncomment only if CONFIG_ZMK_DEFAULT_LAYER_OS_DETECTION
     # ---- comes up undefined after `west update`.
+    # NOTE: if you ever enable this, it inherits revision: main from defaults
+    # and will FLOAT. Give it an explicit SHA the moment you uncomment it.
     # - name: zmk-feature-os-detection
+    #   revision: <sha>
     #   import: true
 
   self:
